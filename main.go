@@ -40,6 +40,7 @@ func main() {
 	form.OnSubmit = func() {
 		log.Println("Form submited:", inputNombre.Text)
 	}
+	form.Resize(fyne.NewSize(200, 200))
 
 	//--
 	txtBienvenida := canvas.NewText("~* ¡Bienvenido! *~", colornames.Cyan)
@@ -52,26 +53,38 @@ func main() {
 
 	//Layouts init
 	centrado := layout.NewCenterLayout()
-	vertical := layout.NewVBoxLayout()
+	horizontal := layout.NewHBoxLayout()
+	grid := layout.NewGridLayout(2)
 
 	//Disposiciones
-	contenedor := fyne.NewContainerWithLayout(vertical, form)
+	cajaCentradaFormulario := fyne.NewContainerWithLayout(centrado,
+		widget.NewVBox(
+			form,
+			widget.NewLabel("Aquí abajo"),
+		),
+	)
+	cajaHorizontalTabla := fyne.NewContainerWithLayout(horizontal,
+		widget.NewLabel("Aquí va la tabla"),
+		widget.NewLabel("Aquí al lado"),
+	)
+	contenedorPrincipal := fyne.NewContainerWithLayout(grid,
+		cajaCentradaFormulario,
+		cajaHorizontalTabla,
+	)
 
 	//--
-
-	cajaBienvenida := widget.NewVBox(
-		txtBienvenida,
-		image,
-	)
 	contenedorBienvenida := fyne.NewContainerWithLayout(centrado,
-		cajaBienvenida,
+		widget.NewVBox(
+			txtBienvenida,
+			image,
+		),
 	)
 
 	//Win Config
 
 	myWindow.Resize(fyne.NewSize(1000, 580))
 	myWindow.SetFixedSize(true)
-	myWindow.SetContent(contenedor)
+	myWindow.SetContent(contenedorPrincipal)
 
 	//----
 	windowSplash.Resize(fyne.NewSize(500, 300))
