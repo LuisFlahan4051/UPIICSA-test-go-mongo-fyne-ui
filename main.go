@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log"
 	"time"
 
@@ -11,6 +12,10 @@ import (
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
 	"fyne.io/fyne/widget"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
+	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"golang.org/x/image/colornames"
 )
 
@@ -23,6 +28,26 @@ func main() {
 	myDriverApp := fyne.CurrentApp().Driver()
 	driverDesktop, _ := myDriverApp.(desktop.Driver)
 	windowSplash := driverDesktop.CreateSplashWindow()
+	//------------ Base de datos init-----------------
+	uri := "mongodb://localhost:27017"
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
+	if err != nil {
+		panic(err)
+	}
+	defer func() {
+		if err = client.Disconnect(ctx); err != nil {
+			panic(err)
+		}
+	}()
+	//Ping
+	if err := client.Ping(ctx, readpref.Primary()); err != nil {
+		panic(err)
+	}
+	log.Println("Successfully connected and pinged.")
+	//---
+	coleccionUsuarios := client.Database("proyecto-registros_db").Collection("usuarios")
 
 	//---------------Elementos-----------------
 	inputNombre := widget.NewEntry()
@@ -102,11 +127,10 @@ func main() {
 	cajaColumnasUsuarios := widget.NewHBox(
 		tituloTabla,
 	)
+	cajaDatosUsuarios := widget.NewVBox()
 	contenedorTabla := fyne.NewContainerWithLayout(vertical,
 		cajaColumnasUsuarios,
-		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Luis"), widget.NewLabel("Bustamante")),
-		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Ricardo"), widget.NewLabel("Avila")),
-		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Ivan"), widget.NewLabel("Perez")),
+		cajaDatosUsuarios,
 	)
 
 	contenedorPrincipal := fyne.NewContainerWithLayout(grid,
@@ -123,6 +147,52 @@ func main() {
 		),
 	)
 
+	//---------------Consultas MongoDB-----------------------
+	edad := ""
+	puntero, err := coleccionUsuarios.Find(ctx, bson.D{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer puntero.Close(ctx)
+	for puntero.Next(ctx) {
+		// To decode into a struct, use cursor.Decode()
+		resultado := struct {
+			Nombre    string
+			Apellidos string
+			Edad      bool
+			Sexo      string
+			Email     string
+			Password  string
+		}{}
+		err := puntero.Decode(&resultado)
+		if err != nil {
+			log.Fatal(err)
+		}
+		// do something with result...
+		if resultado.Edad == true {
+			edad = "Mayor de edad"
+		} else {
+			edad = "Menor de edad"
+		}
+		cajaDatosUsuarios.Append(
+			widget.NewHScrollContainer(
+				widget.NewHBox(
+					widget.NewLabel(">   "+resultado.Nombre+" "+resultado.Apellidos+";"),
+					widget.NewLabel("-   "+edad+";"),
+					widget.NewLabel("-   "+resultado.Sexo+";"),
+					widget.NewLabel("-   "+resultado.Email+";"),
+					widget.NewLabel("-   "+resultado.Password+";"),
+				),
+			),
+		)
+		// To get the raw bson bytes use cursor.Current
+		//raw := puntero.Current
+		// do something with raw...
+	}
+	if err := puntero.Err(); err != nil {
+		log.Fatal(err)
+	}
+
 	//---------------Win Config--------------------
 
 	myWindow.Resize(fyne.NewSize(1000, 580))
@@ -135,6 +205,7 @@ func main() {
 	windowSplash.SetContent(contenedorBienvenida)
 
 	//---------------Show and run, goroutines------------------
+
 	windowSplash.Show()
 
 	go func() {

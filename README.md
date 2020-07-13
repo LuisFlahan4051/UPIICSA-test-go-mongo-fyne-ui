@@ -9,15 +9,21 @@ José Luis Goytia.
 ## Tecnologías usadas 🛠️
 
 Lenguaje de programación **Golang**
+
 Interfaz GUI **Fyne**
+
 Base de Datos **MongoDB**
+
 Controlador de versiones **Git**
 
 ### Pre-requisitos de compilación 📋
 
 Golang
+
 MongoDB
+
 Librería de Fyne-Go
+
 Driver de conexión mongodb-Go
 
 ```
