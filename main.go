@@ -49,7 +49,18 @@ func main() {
 	//---
 	coleccionUsuarios := client.Database("proyecto-registros_db").Collection("usuarios")
 
-	//---------------Elementos-----------------
+	//-------------- Elementos ----------------
+	txtBienvenida := canvas.NewText("~* ¡Bienvenido! *~", colornames.Cyan)
+	txtBienvenida.Alignment = fyne.TextAlignCenter
+	txtBienvenida.TextStyle = fyne.TextStyle{Bold: true}
+	txtBienvenida.TextSize = 38
+
+	image := canvas.NewImageFromFile("src/luisflahan4051apps.png")
+	image.FillMode = canvas.ImageFillOriginal
+
+	barraProgreso := widget.NewProgressBarInfinite()
+
+	//---------------Elementos Formulario-----------------
 	inputNombre := widget.NewEntry()
 	inputNombre.SetPlaceHolder("Nombre completo...")
 	formItemNombre := widget.NewFormItem("Nombre:", inputNombre)
@@ -58,13 +69,15 @@ func main() {
 	inputApellidos.SetPlaceHolder("Ingrese sus dos apellidos...")
 	formItemApellidos := widget.NewFormItem("Apellidos:", inputApellidos)
 
+	edadValue := false
 	inputEdad := widget.NewCheck("Soy mayor de edad.", func(value bool) {
-		log.Println(value)
+		edadValue = value
 	})
 	formItemEdad := widget.NewFormItem("Edad:", inputEdad)
 
+	seleccionSexo := ""
 	inputSexo := widget.NewRadio([]string{"Hombre", "Mujer"}, func(value string) {
-		log.Println(value)
+		seleccionSexo = value
 	})
 	formItemSexo := widget.NewFormItem("Sexo:", inputSexo)
 
@@ -78,6 +91,7 @@ func main() {
 	formStatus := widget.NewLabel("")
 	formStatus.TextStyle = fyne.TextStyle{Italic: true}
 
+	edad := ""
 	form := widget.NewForm(
 		formItemNombre,
 		formItemApellidos,
@@ -86,28 +100,8 @@ func main() {
 		formItemEmail,
 		formItemPassword,
 	)
-	form.OnSubmit = func() {
-		log.Println("Form submited:", inputNombre.Text)
-		formStatus.Text = "Datos guardados correctamente!"
-		formStatus.Refresh()
-		go func() {
-			time.Sleep(time.Second * 2)
-			formStatus.Text = ""
-			formStatus.Refresh()
-		}()
-	}
+
 	form.Resize(fyne.NewSize(200, 200))
-
-	//--
-	txtBienvenida := canvas.NewText("~* ¡Bienvenido! *~", colornames.Cyan)
-	txtBienvenida.Alignment = fyne.TextAlignCenter
-	txtBienvenida.TextStyle = fyne.TextStyle{Bold: true}
-	txtBienvenida.TextSize = 38
-
-	image := canvas.NewImageFromFile("src/luisflahan4051apps.png")
-	image.FillMode = canvas.ImageFillOriginal
-
-	barraProgreso := widget.NewProgressBarInfinite()
 
 	//----------------Layouts init---------------------
 	centrado := layout.NewCenterLayout()
@@ -115,12 +109,6 @@ func main() {
 	grid := layout.NewGridLayout(2)
 
 	//----------------Disposiciones--------------------
-	contenedorFormulario := fyne.NewContainerWithLayout(centrado,
-		widget.NewVBox(
-			form,
-			formStatus,
-		),
-	)
 
 	tituloTabla := widget.NewLabel("Usuarios:")
 	tituloTabla.TextStyle = fyne.TextStyle{Bold: true}
@@ -131,6 +119,13 @@ func main() {
 	contenedorTabla := fyne.NewContainerWithLayout(vertical,
 		cajaColumnasUsuarios,
 		cajaDatosUsuarios,
+	)
+
+	contenedorFormulario := fyne.NewContainerWithLayout(centrado,
+		widget.NewVBox(
+			form,
+			formStatus,
+		),
 	)
 
 	contenedorPrincipal := fyne.NewContainerWithLayout(grid,
@@ -147,15 +142,54 @@ func main() {
 		),
 	)
 
-	//---------------Consultas MongoDB-----------------------
-	edad := ""
+	//---------------Busqueda MongoDB-----------------------
+	form.OnSubmit = func() {
+
+		insertResultado, err := coleccionUsuarios.InsertOne(context.Background(), bson.M{
+			"Nombre":    inputNombre.Text,
+			"Apellidos": inputApellidos.Text,
+			"Edad":      inputEdad.Checked,
+			"Sexo":      seleccionSexo,
+			"Email":     inputEmail.Text,
+			"Password":  inputPassword.Text,
+		})
+		if err != nil {
+			log.Fatal(err)
+		}
+		log.Println(insertResultado.InsertedID)
+		formStatus.Text = "Datos guardados correctamente!"
+
+		if edadValue == true {
+			edad = "Mayor de edad"
+		} else {
+			edad = "Menor de edad"
+		}
+		cajaDatosUsuarios.Append(
+			widget.NewHScrollContainer(
+				widget.NewHBox(
+					widget.NewLabel(">   "+inputNombre.Text+" "+inputApellidos.Text+";"),
+					widget.NewLabel("-   "+edad+";"),
+					widget.NewLabel("-   "+seleccionSexo+";"),
+					widget.NewLabel("-   "+inputEmail.Text+";"),
+					widget.NewLabel("-   "+inputPassword.Text+";"),
+				),
+			),
+		)
+
+		formStatus.Refresh()
+		go func() {
+			time.Sleep(time.Second * 2)
+			formStatus.Text = ""
+			formStatus.Refresh()
+		}()
+	}
+
 	puntero, err := coleccionUsuarios.Find(ctx, bson.D{})
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer puntero.Close(ctx)
 	for puntero.Next(ctx) {
-		// To decode into a struct, use cursor.Decode()
 		resultado := struct {
 			Nombre    string
 			Apellidos string
@@ -168,7 +202,6 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		// do something with result...
 		if resultado.Edad == true {
 			edad = "Mayor de edad"
 		} else {
@@ -185,9 +218,6 @@ func main() {
 				),
 			),
 		)
-		// To get the raw bson bytes use cursor.Current
-		//raw := puntero.Current
-		// do something with raw...
 	}
 	if err := puntero.Err(); err != nil {
 		log.Fatal(err)
