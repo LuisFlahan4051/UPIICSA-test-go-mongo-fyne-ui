@@ -43,6 +43,13 @@ func main() {
 	})
 	formItemSexo := widget.NewFormItem("Sexo:", inputSexo)
 
+	inputEmail := widget.NewEntry()
+	inputEmail.SetPlaceHolder("email_ejemplo@mail.com")
+	formItemEmail := widget.NewFormItem("Email:", inputEmail)
+
+	inputPassword := widget.NewPasswordEntry()
+	formItemPassword := widget.NewFormItem("Contraseña:", inputPassword)
+
 	formStatus := widget.NewLabel("")
 	formStatus.TextStyle = fyne.TextStyle{Italic: true}
 
@@ -51,6 +58,8 @@ func main() {
 		formItemApellidos,
 		formItemEdad,
 		formItemSexo,
+		formItemEmail,
+		formItemPassword,
 	)
 	form.OnSubmit = func() {
 		log.Println("Form submited:", inputNombre.Text)
@@ -77,23 +86,32 @@ func main() {
 
 	//----------------Layouts init---------------------
 	centrado := layout.NewCenterLayout()
-	horizontal := layout.NewHBoxLayout()
+	vertical := layout.NewVBoxLayout()
 	grid := layout.NewGridLayout(2)
 
 	//----------------Disposiciones--------------------
-	cajaCentradaFormulario := fyne.NewContainerWithLayout(centrado,
+	contenedorFormulario := fyne.NewContainerWithLayout(centrado,
 		widget.NewVBox(
 			form,
 			formStatus,
 		),
 	)
-	cajaHorizontalTabla := fyne.NewContainerWithLayout(horizontal,
-		widget.NewLabel("Aquí va la tabla"),
-		widget.NewLabel("Aquí al lado"),
+
+	tituloTabla := widget.NewLabel("Usuarios:")
+	tituloTabla.TextStyle = fyne.TextStyle{Bold: true}
+	cajaColumnasUsuarios := widget.NewHBox(
+		tituloTabla,
 	)
+	contenedorTabla := fyne.NewContainerWithLayout(vertical,
+		cajaColumnasUsuarios,
+		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Luis"), widget.NewLabel("Bustamante")),
+		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Ricardo"), widget.NewLabel("Avila")),
+		widget.NewHBox(widget.NewLabel(">"), widget.NewLabel("Ivan"), widget.NewLabel("Perez")),
+	)
+
 	contenedorPrincipal := fyne.NewContainerWithLayout(grid,
-		cajaCentradaFormulario,
-		cajaHorizontalTabla,
+		contenedorFormulario,
+		contenedorTabla,
 	)
 
 	//--
