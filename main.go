@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	//Win Init
+	//--------------Win Init------------------
 	myApp := app.New()
 
 	myWindow := myApp.NewWindow("Proyecto LuisFlahan4051 Registro de usuarios")
@@ -24,7 +24,7 @@ func main() {
 	driverDesktop, _ := myDriverApp.(desktop.Driver)
 	windowSplash := driverDesktop.CreateSplashWindow()
 
-	//Elementos
+	//---------------Elementos-----------------
 	inputNombre := widget.NewEntry()
 	inputNombre.SetPlaceHolder("Nombre completo...")
 	formItemNombre := widget.NewFormItem("Nombre:", inputNombre)
@@ -33,12 +33,34 @@ func main() {
 	inputApellidos.SetPlaceHolder("Ingrese sus dos apellidos...")
 	formItemApellidos := widget.NewFormItem("Apellidos:", inputApellidos)
 
+	inputEdad := widget.NewCheck("Soy mayor de edad.", func(value bool) {
+		log.Println(value)
+	})
+	formItemEdad := widget.NewFormItem("Edad:", inputEdad)
+
+	inputSexo := widget.NewRadio([]string{"Hombre", "Mujer"}, func(value string) {
+		log.Println(value)
+	})
+	formItemSexo := widget.NewFormItem("Sexo:", inputSexo)
+
+	formStatus := widget.NewLabel("")
+	formStatus.TextStyle = fyne.TextStyle{Italic: true}
+
 	form := widget.NewForm(
 		formItemNombre,
 		formItemApellidos,
+		formItemEdad,
+		formItemSexo,
 	)
 	form.OnSubmit = func() {
 		log.Println("Form submited:", inputNombre.Text)
+		formStatus.Text = "Datos guardados correctamente!"
+		formStatus.Refresh()
+		go func() {
+			time.Sleep(time.Second * 2)
+			formStatus.Text = ""
+			formStatus.Refresh()
+		}()
 	}
 	form.Resize(fyne.NewSize(200, 200))
 
@@ -51,16 +73,18 @@ func main() {
 	image := canvas.NewImageFromFile("src/luisflahan4051apps.png")
 	image.FillMode = canvas.ImageFillOriginal
 
-	//Layouts init
+	barraProgreso := widget.NewProgressBarInfinite()
+
+	//----------------Layouts init---------------------
 	centrado := layout.NewCenterLayout()
 	horizontal := layout.NewHBoxLayout()
 	grid := layout.NewGridLayout(2)
 
-	//Disposiciones
+	//----------------Disposiciones--------------------
 	cajaCentradaFormulario := fyne.NewContainerWithLayout(centrado,
 		widget.NewVBox(
 			form,
-			widget.NewLabel("Aquí abajo"),
+			formStatus,
 		),
 	)
 	cajaHorizontalTabla := fyne.NewContainerWithLayout(horizontal,
@@ -77,21 +101,22 @@ func main() {
 		widget.NewVBox(
 			txtBienvenida,
 			image,
+			barraProgreso,
 		),
 	)
 
-	//Win Config
+	//---------------Win Config--------------------
 
 	myWindow.Resize(fyne.NewSize(1000, 580))
 	myWindow.SetFixedSize(true)
 	myWindow.SetContent(contenedorPrincipal)
 
 	//----
-	windowSplash.Resize(fyne.NewSize(500, 300))
+	windowSplash.Resize(fyne.NewSize(500, 400))
 	windowSplash.CenterOnScreen()
 	windowSplash.SetContent(contenedorBienvenida)
 
-	//Show and run
+	//---------------Show and run, goroutines------------------
 	windowSplash.Show()
 
 	go func() {
