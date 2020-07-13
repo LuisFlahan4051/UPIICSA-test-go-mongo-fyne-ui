@@ -8,6 +8,7 @@ import (
 	"fyne.io/fyne"
 	"fyne.io/fyne/app"
 	"fyne.io/fyne/canvas"
+	"fyne.io/fyne/dialog"
 	"fyne.io/fyne/driver/desktop"
 	"fyne.io/fyne/layout"
 	"fyne.io/fyne/theme"
@@ -119,6 +120,13 @@ func main() {
 	contenedorTabla := fyne.NewContainerWithLayout(vertical,
 		cajaColumnasUsuarios,
 		cajaDatosUsuarios,
+		widget.NewButton("Borrar Datos", func() {
+			err := coleccionUsuarios.Drop(context.Background())
+			if err != nil {
+				log.Fatal(err)
+			}
+			dialog.ShowConfirm("Sistema", "Base de datos borrada!\nPara ver los cambios reinicie la aplicación.", func(bool) {}, myWindow)
+		}),
 	)
 
 	contenedorFormulario := fyne.NewContainerWithLayout(centrado,
