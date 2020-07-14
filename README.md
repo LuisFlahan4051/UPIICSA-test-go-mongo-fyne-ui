@@ -6,6 +6,12 @@ IPN - UPIICSA
 Profesor: 
 José Luis Goytia.
 
+## Capturas
+![alt text](https://github.com/LuisFlahan4051/proyecto-registros/captura1.png)
+![alt text](https://github.com/LuisFlahan4051/proyecto-registros/captura2.png)
+![alt text](https://github.com/LuisFlahan4051/proyecto-registros/captura3.png)
+![alt text](https://github.com/LuisFlahan4051/proyecto-registros/captura4.png)
+
 ## Tecnologías usadas 🛠️
 
 Lenguaje de programación **Golang**
@@ -47,13 +53,13 @@ Secuencia: **1CM12**
 2020602568
 https://github.com/luisflahan4051
 
-**Ricardo Avila**
---
-https://github.com/
+**Ávila Flores Ricardo.**
+2020602143.
+https://github.com/RichiePeek
 
-**Ivan Perez**
---
-https://github.com/
+**Pérez Cuevas Ivan.**
+2020601813.
+https://github.com/Ivanpc234
 
 ## Licencia 📄
 
