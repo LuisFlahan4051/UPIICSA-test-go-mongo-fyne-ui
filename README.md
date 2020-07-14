@@ -44,8 +44,8 @@ Driver de conexión mongodb-Go
 
 https://docs.mongodb.com/drivers/go
 
+**Despues de instalar Go:**
 ```
-Despues de instalar Go:
 $ go get -u github.com/go-gl/glfw/v3.3/glfw
 $ go get fyne.io/fyne
 $ go get fyne.io/fyne/cmd/fyne
@@ -54,19 +54,49 @@ $ go get go.mongodb.org/mongo-driver/mongo
 
 ### Instalación 🔧
 
-**EN EDICIÓN**
-**<--Para ejecutar en **windows** hay que alzar el servidor de MongoDB**
-**luego abrir el archivo .exe**
+Para ejecutar en **windows**:
 
-**Para ejecutar en **linux** hay que alzar el servidor de MongoDB**
-**luego abrir el archivo en consola con el comando**
-**$ ./programa.run -->**
+Descargar el repositorio.
+```
+$ cd C:\Users\%USERNAME%\Desktop
+$ git clone https://github.com/LuisFlahan4051/proyecto-registros
+$ cd proyecto-registros
+```
 
+Despues de instalar MongoDB y agregar al PATH los binarios correspondientes podremos ingresar las siguientes lineas para alzar el servidor:
+
+**Nota:** En caso de que no exista la carpeta data en C:/ vamos a crearla.
+```
+$ cd C:\
+$ mkdir data
+$ cd C:\data
+$ mkdir db
+```
+
+Ahora vamos a alzar el servidor en un CMD aparte con la siguiente linea:
+```
+$ mongod
+```
+
+Ahora podemos ejecutar el **goproj.exe** dentro de la carpeta del proyecto.
+
+De la misma manera en linux podemos alzar el revidor y abrir el programa con la siguiente línea:
+```
+$ cd $HOME/Escritorio
+$ git clone https://github.com/LuisFlahan4051/proyecto-registros
+$ cd proyecto-registros
+$ mongod
+```
+En otro shell:
+```
+$ cd $HOME/Escritorio/proyecto-registros
+$ ./goproj
+```
 ## Autores ✒️
 Secuencia: **1CM12**
 
 **Melendez Bustamante Luis Fernando.**
-2020602568
+2020602568.
 https://github.com/luisflahan4051
 
 **Ávila Flores Ricardo.**
