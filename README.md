@@ -4,13 +4,17 @@ Proyecto escolar del instituto:
 IPN - UPIICSA
 
 Profesor: 
-José Luis Goytia.
+José Luis Lopez Goytia.
 
 ## Capturas
 ![alt text](captura1.png)
 ![alt text](captura2.png)
 ![alt text](captura3.png)
 ![alt text](captura4.png)
+
+Video demostrativo:
+
+https://drive.google.com/file/d/1FcKDgtt9bOPkCuHLCQSvExwZYBjXAFyx/view?usp=sharing
 
 ## Tecnologías usadas 🛠️
 
@@ -26,14 +30,26 @@ Controlador de versiones **Git**
 
 Golang
 
+https://golang.org/doc/install
+
 MongoDB
+
+https://www.mongodb.com/try/download/community
 
 Librería de Fyne-Go
 
+https://fyne.io/
+
 Driver de conexión mongodb-Go
 
-```
+https://docs.mongodb.com/drivers/go
 
+```
+Despues de instalar Go:
+$ go get -u github.com/go-gl/glfw/v3.3/glfw
+$ go get fyne.io/fyne
+$ go get fyne.io/fyne/cmd/fyne
+$ go get go.mongodb.org/mongo-driver/mongo
 ```
 
 ### Instalación 🔧
