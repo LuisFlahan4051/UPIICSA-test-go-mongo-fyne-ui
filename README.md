@@ -7,10 +7,10 @@ Profesor:
 José Luis Goytia.
 
 ## Capturas
-![alt text](https://https://github.com/LuisFlahan4051/proyecto-registros/master/captura1.png)
-![alt text](https://https://github.com/LuisFlahan4051/proyecto-registros/master/captura2.png)
-![alt text](https://https://github.com/LuisFlahan4051/proyecto-registros/master/captura3.png)
-![alt text](https://https://github.com/LuisFlahan4051/proyecto-registros/master/captura4.png)
+![alt text](captura1.png)
+![alt text](captura2.png)
+![alt text](captura3.png)
+![alt text](captura4.png)
 
 ## Tecnologías usadas 🛠️
 
