@@ -67,10 +67,15 @@ Despues de instalar MongoDB y agregar al PATH los binarios correspondientes podr
 
 **Nota:** En caso de que no exista la carpeta data en C:/ vamos a crearla.
 ```
+# Windows
 $ cd C:\
 $ mkdir data
 $ cd C:\data
 $ mkdir db
+# Linux
+sudo mkdir -p /data/db
+sudo chown -R `id -un` /data/db
+
 ```
 
 Ahora vamos a alzar el servidor en un CMD aparte con la siguiente linea:
